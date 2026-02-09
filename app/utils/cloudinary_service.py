@@ -1,6 +1,7 @@
 ﻿import cloudinary
 import cloudinary.uploader
 from app.core.config import settings
+import io
 
 cloudinary.config(
     cloud_name=settings.CLOUDINARY_CLOUD_NAME,
@@ -12,8 +13,12 @@ cloudinary.config(
 def upload_image(file, folder='juegos'):
     '''Sube una imagen a Cloudinary'''
     try:
+        # Leer el contenido del archivo
+        file_content = file.file.read()
+        file.file.seek(0)
+        
         result = cloudinary.uploader.upload(
-            file.file,
+            file_content,
             folder=folder,
             resource_type='image'
         )
