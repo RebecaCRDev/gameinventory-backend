@@ -10,3 +10,4 @@ pydantic-settings==2.5.2
 Pillow==10.4.0
 gunicorn==21.2.0
 email-validator==2.1.0
+cloudinary==1.41.0

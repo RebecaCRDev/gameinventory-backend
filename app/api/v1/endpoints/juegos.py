@@ -1,11 +1,9 @@
 ﻿from fastapi import APIRouter, HTTPException, status, UploadFile, File, Form
 from typing import Optional, List
 from decimal import Decimal
-import uuid
-import os
-from pathlib import Path
-from app.models.juego import JuegoOut, JuegoCreate, JuegoUpdate
+from app.models.juego import JuegoOut
 from app.services import juego_service
+from app.utils.cloudinary_service import upload_image
 from app.core.config import settings
 
 router = APIRouter(prefix='/juegos', tags=['Juegos'])
@@ -53,15 +51,17 @@ async def crear_juego(
                 detail='La imagen es muy grande (max 5MB)'
             )
         
-        ext = Path(imagen.filename).suffix
-        filename = f'{uuid.uuid4()}{ext}'
-        filepath = Path(settings.UPLOAD_DIR) / filename
-        filepath.parent.mkdir(parents=True, exist_ok=True)
+        # Crear archivo temporal para Cloudinary
+        imagen.file.seek(0)
+        imagen_url = upload_image(imagen, folder='juegos')
         
-        with open(filepath, 'wb') as f:
-            f.write(contents)
-        
-        data['imagen'] = filename
+        if imagen_url:
+            data['imagen'] = imagen_url
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail='Error al subir la imagen'
+            )
     
     return juego_service.crear(data)
 
@@ -104,21 +104,16 @@ async def actualizar_juego(
                 detail='La imagen es muy grande (max 5MB)'
             )
         
-        ext = Path(imagen.filename).suffix
-        filename = f'{uuid.uuid4()}{ext}'
-        filepath = Path(settings.UPLOAD_DIR) / filename
-        filepath.parent.mkdir(parents=True, exist_ok=True)
+        imagen.file.seek(0)
+        imagen_url = upload_image(imagen, folder='juegos')
         
-        with open(filepath, 'wb') as f:
-            f.write(contents)
-        
-        data['imagen'] = filename
-        
-        juego_actual = juego_service.detalle(juego_id)
-        if juego_actual.get('imagen'):
-            old_path = Path(settings.UPLOAD_DIR) / juego_actual['imagen']
-            if old_path.exists():
-                old_path.unlink()
+        if imagen_url:
+            data['imagen'] = imagen_url
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail='Error al subir la imagen'
+            )
     
     return juego_service.actualizar(juego_id, data)
 
@@ -126,12 +121,6 @@ async def actualizar_juego(
 @router.delete('/{juego_id}', status_code=status.HTTP_204_NO_CONTENT)
 def eliminar_juego(juego_id: int):
     '''Eliminar un juego'''
-    juego = juego_service.detalle(juego_id)
-    if juego.get('imagen'):
-        filepath = Path(settings.UPLOAD_DIR) / juego['imagen']
-        if filepath.exists():
-            filepath.unlink()
-    
     juego_service.eliminar(juego_id)
     return None
 
