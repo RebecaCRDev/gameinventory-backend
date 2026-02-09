@@ -10,7 +10,7 @@ router = APIRouter(prefix='/juegos', tags=['Juegos'])
 
 
 @router.get('', response_model=List[JuegoOut])
-def listar_juegos(activos: bool = True):
+def listar_juegos(activos: bool = None):
     '''Listar todos los juegos'''
     return juego_service.listar(activos=activos)
 
