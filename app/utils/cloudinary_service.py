@@ -1,12 +1,10 @@
 ﻿import cloudinary
 import cloudinary.uploader
-from app.core.config import settings
-import io
 
 cloudinary.config(
-    cloud_name=settings.CLOUDINARY_CLOUD_NAME,
-    api_key=settings.CLOUDINARY_API_KEY,
-    api_secret=settings.CLOUDINARY_API_SECRET,
+    cloud_name='drbtinf6a',
+    api_key='233317843164278',
+    api_secret='QjduXmM8IKMEBAgvVk-FneFWAYc',
     secure=True
 )
 
