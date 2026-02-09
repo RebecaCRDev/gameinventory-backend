@@ -2,7 +2,7 @@
 import cloudinary.uploader
 
 cloudinary.config(
-    cloud_name='drbtinf6a',
+    cloud_name='drbtlnf6a',
     api_key='233317843164278',
     api_secret='QjduXmM8IKMEBAgvVk-FneFWAYc',
     secure=True
