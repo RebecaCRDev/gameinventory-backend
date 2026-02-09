@@ -11,9 +11,9 @@ class Settings(BaseSettings):
     DB_PORT: int = 3306
 
 # Cloudinary
-    CLOUDINARY_CLOUD_NAME: str = ""
-    CLOUDINARY_API_KEY: str = ""
-    CLOUDINARY_API_SECRET: str = ""
+    CLOUDINARY_CLOUD_NAME: str = "drbtinf6a"
+    CLOUDINARY_API_KEY: str = "233317843164278"
+    CLOUDINARY_API_SECRET: str = "QjduXmM8IKMEBAgvVk-FneFWAYc"
 
     # JWT
     SECRET_KEY: str
